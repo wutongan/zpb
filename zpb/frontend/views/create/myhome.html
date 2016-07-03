@@ -1,0 +1,482 @@
+<!DOCTYPE HTML>
+<html xmlns:wb="http://open.weibo.com/wb">
+<body>
+<div id="body">
+    <?php
+use yii\widgets\ActiveForm;
+?>
+    <!--引入头部 start-->
+    <?php $form = ActiveForm::begin(); ?>
+    <?php $this->beginContent('@frontend/views/site/head.html')?>
+    <?php $this->endContent()?>
+    <?php ActiveForm::end(); ?>
+    <!--END-->
+
+    <div id="container">
+        <!-- <script src="style/js/swfobject_modified.js" type="text/javascript"></script> -->
+        <div class="clearfix">
+
+            <div class="content_l">
+                <div class="c_detail">
+                    <div style="background-color:#fff;" class="c_logo">
+                        <a title="上传公司LOGO" id="logoShow" class="inline cboxElement">
+                            <img width="190" height="190" alt="" id="logo" src="<?=$arr['firm_logo'];?>">
+							<input type="file" name="firm_logo" id="firm_logo"  >
+                            <span>更换公司图片<br>190px*190px 小于5M</span>
+                        </a>
+                    </div>
+					<!--公司logo start-->
+					<script>
+						$("#firm_logo").change(function(){
+							var data = new FormData();
+							$.each($("#firm_logo")[0].files, function(i, file) {
+								data.append('upload_file', file);
+							});
+							$.ajax({
+								url:'index.php?r=create/logo',
+								type:'POST',
+								data:data,
+								cache: false,
+								contentType: false,    //不可缺
+								processData: false,    //不可缺
+								success:function(msg)
+								{
+									$('#logo').removeAttr('src');
+									$('#logo').attr('src',msg);
+								}
+							})	
+						})
+					</script>
+					<!--公司logo end-->
+                    <div class="c_box companyName">
+                        <h2 id="h2" title="<?=$arr['firm_name']?>"><?=$arr['firm_name']?></h2>
+
+                        <em class="unvalid"></em>
+                        <span class="va dn">拉勾未认证企业</span>
+                        <a target="_blank" class="applyC" href="index.php?r=create/auth">申请认证</a>
+                        <div class="clear"></div>
+
+                        <h1 title="<?=$arr['firm_name']?>" class="fullname"><?=$arr['firm_name']?></h1>
+
+                        <form class="clear editDetail dn" id="editDetailForm">
+                            <input type="text" placeholder="请输入公司简称" maxlength="15" value="<?=$arr['firm_name']?>" name="firm_name" id="firm_name">
+                            <input type="hidden" value="25927" id="companyId" name="companyId">
+                            <input type="button" value="保存" id="saveDetail" class="btn_small">
+                            <a id="cancelDetail" class="btn_cancel_s" >取消</a>
+                        </form>
+						<!--基本信息保存start-->
+						<script>
+							$('#saveDetail').click(function(){
+								var name = $('#firm_name').val();
+								var firm_name = $('.fullname').html();
+								if(name!=firm_name)
+								{
+									$.ajax({
+										type:'get',
+										url:"index.php?r=create/details",
+										data:'firm_name='+name,
+										success:function(msg)
+										{
+											if(msg==1)
+											{
+												$('.fullname').html(name);
+												$('#h2').html(name);
+												$('#editDetailForm').hide();
+												$('#editCompanyDetail').show();
+											}
+										}
+									})
+								}
+								else
+								{
+									$('#editDetailForm').hide();
+									$('#editCompanyDetail').show();
+								}
+							})
+						</script>
+						<!--基本信息保存end-->
+                        <h3 class="dn">已选择标签</h3>
+                        <ul style="overflow:auto" id="hasLabels" class="reset clearfix">
+							<?php for($i=0;$i<count($firm_xy);$i++){?>
+                            <li><span><?=$firm_xy[$i]?></span></li>
+							<?php }?>
+                            <li class="link">编辑</li>
+                        </ul>
+                        <div class="dn" id="addLabels">
+                            <a id="changeLabels" class="change" href="javascript:void(0)">换一换</a>
+                            <input type="hidden" value="1" id="labelPageNo">
+                            <input type="submit" value="贴上" class="fr" id="add_label">
+                            <input type="text" placeholder="添加自定义标签" name="label" id="label" class="label_form fr">
+                            <div class="clear"></div>
+                            <ul class="reset clearfix"> </ul>
+                            <a id="saveLabels" class="btn_small" href="javascript:void(0)">保存</a>
+                            <a id="cancelLabels" class="btn_cancel_s" href="javascript:void(0)">取消</a>
+                        </div>
+                    </div>
+                    <a title="编辑基本信息" class="c_edit" id="editCompanyDetail" href="javascript:void(0);"></a>
+                    <div class="clear"></div>
+                </div>
+
+                <div class="c_breakline"></div>
+
+                <div id="Profile">
+                    <div class="profile_wrap">
+                        <!--无介绍 -->
+                        <dl class="c_section dn">
+                            <dt>
+                            <h2><em></em>公司介绍</h2>
+                            </dt>
+                            <dd>
+                                <div class="addnew">
+                                    详细公司的发展历程、让求职者更加了解你!<br>
+                                    <a id="addIntro" href="javascript:void(0)">+添加公司介绍</a>
+                                </div>
+                            </dd>
+                        </dl>
+                        <!--编辑介绍-->
+                        <dl class="c_section newIntro dn">
+                            <dt>
+                            <h2><em></em>公司介绍</h2>
+                            </dt>
+                            <dd>
+                                <form id="companyDesForm">
+                                    <textarea placeholder="请分段详细描述公司简介、企业文化等" name="companyProfile" id="companyProfile"><?=$arr['firm_desc'];?></textarea>
+                                    <div class="word_count fr">你还可以输入 <span>1000</span> 字</div>
+                                    <div class="clear"></div>
+                                    <input type="button" value="保存" id="submitProfile" class="btn_small">
+                                    <a id="delProfile" class="btn_cancel_s" href="javascript:void(0)">取消</a>
+                                </form>
+                            </dd>
+                        </dl>
+
+                        <!--有介绍-->
+                        <dl class="c_section" id="firm_desc">
+                            <dt>
+                            <h2><em></em>公司介绍</h2>
+                            </dt>
+						
+                            <dd>
+                                <div class="c_intro"><?=$arr['firm_desc'];?></div>
+                                <a title="编辑公司介绍" id="editIntro" class="c_edit" href="javascript:void(0)"></a>
+                            </dd>
+						
+                        </dl>
+                    </div>
+
+                </div><!-- end #Profile -->
+				<!--公司介绍start-->
+				<script>
+					$('#submitProfile').click(function(){
+						var desc = $('#companyProfile').val();
+						var firm_desc = $('.c_intro').html();
+						if(desc!=firm_desc)
+						{
+							$.ajax({
+								type:'get',
+								url:'index.php?r=create/desc',
+								data:'firm_desc='+desc,
+								success:function(msg)
+								{
+									if(msg==1)
+									{
+										$('.c_intro').html(desc);
+										$('#firm_desc').show();
+										$('.newIntro').hide();
+									}
+								}
+							})
+						}
+						else
+						{
+							$('.c_intro').html(firm_desc);
+							$('#firm_desc').show();
+							$('.newIntro').hide();
+						}
+					})
+				</script>
+				<!--公司介绍end-->
+                <!--[if IE 7]> <br /> <![endif]-->
+
+                <!--无招聘职位-->
+                <dl id="noJobs" class="c_section">
+                    <dt>
+                    <h2><em></em>招聘职位</h2>
+                    </dt>
+                    <dd>
+                        <div class="addnew">
+                            发布需要的人才信息，让伯乐和千里马尽快相遇……<br>
+                            <a href="index.php?r=create/index">+添加招聘职位</a>
+                        </div>
+                    </dd>
+                </dl>
+
+                <input type="hidden" value="" name="hasNextPage" id="hasNextPage">
+                <input type="hidden" value="" name="pageNo" id="pageNo">
+                <input type="hidden" value="" name="pageSize" id="pageSize">
+                <div id="flag"></div>
+            </div>	<!-- end .content_l -->
+
+            <div class="content_r">
+                <div id="Tags">
+                    <div id="c_tags_show" class="c_tags solveWrap">
+                        <table>
+                            <tbody><tr>
+                                <td width="45">地点</td>
+                                <td id="ct"><?=$arr['firm_address'];?></td>
+                            </tr>
+                            <tr>
+                                <td>领域</td><!-- 支持多选 -->
+                                <td id="ly" title="<?=$arr['field_name']?>"><?=$arr['field_name']?></td>
+                            </tr>
+                            <tr>
+                                <td>规模</td>
+                                <td id="gm"><?=$arr['firm_sca'];?></td>
+                            </tr>
+                            </tbody></table>
+                        <a id="editTags" class="c_edit" href="javascript:void(0)"></a>
+                    </div>
+                    <div id="c_tags_edit" class="c_tags editTags dn">
+                        <form id="tagForms">
+                            <table>
+                                <tbody><tr>
+                                    <td>地点</td>
+                                    <td>
+                                        <input type="text" placeholder="请输入地点" value="<?=$arr['firm_address'];?>" name="city" id="city">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>领域</td><!-- 支持多选 -->
+                                    <td>
+                                        <input type="hidden" value="<?=$arr['field_name'];?>" id="financeStage" name="financeStage">
+										<input type="button" value="<?=$arr['field_name'];?>" id="select_fin" class="select_tags_short fl">
+										<div class="selectBoxShort dn" id="box_fin" style="display: none;">
+											<ul class="reset">
+											<?php foreach($field as $k=>$v){?>
+												<li><?=$v['field_name'];?></li>
+											<?php }?>
+											</ul>
+										</div>	
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>规模</td>
+                                    <td>
+                                        <input type="hidden" value="<?=$arr['firm_sca'];?>" id="companySize" name="companySize">
+                                        <input type="button" value="<?=$arr['firm_sca'];?>" id="select_sca" class="select_tags">
+                                        <div class="selectBox dn" id="box_sca" style="display: none;">
+                                            <ul class="reset">
+                                                <li>少于15人</li>
+                                                <li>15-50人</li>
+                                                <li>50-150人</li>
+                                                <li>150-500人</li>
+                                                <li>500-2000人</li>
+                                                <li>2000人以上</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="button" value="保存" id="submitFeatures" class="btn_small">
+                            <a id="cancelFeatures" class="btn_cancel_s" href="javascript:void(0)">取消</a>
+                            <div class="clear"></div>
+                        </form>
+                    </div>
+                </div><!-- end #Tags -->
+				<!--地点 领域 规模start-->
+				<script>
+					$('#submitFeatures').click(function(){
+						var city = $('#city').val();
+						var sca = $('#select_sca').val();
+						var fin = $('#select_fin').val();
+						var gm = $('#gm').html();
+						var ct = $('#ct').html();
+						var ly = $('#ly').html();
+						$.ajax({
+							type:'get',
+							url:'index.php?r=create/city',
+							data:'city='+city+'&sca='+sca+'&fin='+fin,
+							success:function(msg)
+							{
+								if(msg==1)
+								{
+									$('#gm').html(sca);
+									$('#ct').html(city);
+									$('#ly').html(fin);
+									$('#c_tags_edit').hide();
+									$('#c_tags_show').show();
+								}
+								else
+								{
+									$('#gm').html(sca);
+									$('#ct').html(city);
+									$('#ly').html(fin);
+									$('#c_tags_edit').hide();
+									$('#c_tags_show').show();
+								}
+							}
+						})
+					})
+				</script>
+				<!--地点 领域 规模end -->
+                <dl class="c_section c_stages">
+                    <dt>
+                    <h2><em></em>融资阶段</h2>
+                    <a title="编辑融资阶段" class="c_edit" href="javascript:void(0)" id="dt" ></a>
+                    </dt>
+                    <dd>
+                        <ul class="reset stageshow">
+                            <li>融资阶段：<span class="c5" id="firm_stage"><?=$arr['firm_stage'];?></span></li>
+                        </ul>
+                        <form class="dn" id="stageform">
+                            <ul id="stagesList" class="reset">
+                                <li>
+                                    <label>融资阶段</label>
+                                    <input type="hidden" class="select_invest_hidden" name="select_invest_hidden">
+                                    <input type="button" value="<?=$arr['firm_stage'];?>" class="select_tags_short select_invest" id="stage">
+                                    <div class="selectBoxShort dn" style="display: none;">
+                                        <ul class="reset">
+                                            <li>天使轮</li>
+                                            <li>A轮</li>
+                                            <li>B轮</li>
+                                            <li>C轮</li>
+                                            <li>D轮及以上</li>
+                                            <li>上市公司</li>
+                                        </ul>
+                                    </div>
+                                </li>
+                            </ul>
+                            <input type="button" id="stages" value="保存" class="btn_small">
+                            <a id="cancelStages" class="btn_cancel_s" href="javascript:void(0)">取消</a>
+                            <div class="clear"></div>
+                        </form>
+                    </dd>
+                </dl><!-- end .c_stages -->
+				<!--融资阶段start-->
+				<script>
+					$('#stages').click(function(){
+						var st = $('#firm_stage').html();
+						var stage = $('#stage').val();
+						if(stage!=st)
+						{
+							$.ajax({
+								type:'get',
+								url:'index.php?r=create/stage',
+								data:'stage='+stage,
+								success:function(msg)
+								{
+									if(msg==1)
+									{
+										$('#firm_stage').html(stage);
+										$('.stageshow').show();
+										$('#stageform').hide();
+										$('#dt').show();
+									}
+								}
+							})
+						}
+						else
+						{
+							$('.stageshow').show();
+							$('#stageform').hide();
+							$('#dt').show();
+						}
+					})
+				</script>
+				<!--融资阶段end-->
+                <div id="Member">
+                    <!--有创始团队-->
+                    <dl class="c_section c_member">
+                        <dt>
+                        <h2><em></em>创始人</h2>
+                        </dt>
+                        <dd>
+
+                            <div class="member_wrap">
+
+                                <!-- 无创始人 -->
+                                <div class="member_info addnew_right dn">
+                                    展示公司的领导班子，<br>提升诱人指数！<br>
+                                    <a class="member_edit" href="javascript:void(0)">+添加成员</a>
+                                </div>
+
+                                <!-- 编辑创始人 -->
+                                <div class="member_info newMember dn" id="bb">
+                                    <form class="memberForm">
+                                        <input type="text" placeholder="请输入创始人姓名" value="<?=$arr['firm_founder']?>" name="name" id="name">
+                                        <div class="clear"></div>
+                                        <input type="button" id="founder" value="保存" class="btn_small">
+                                    </form>
+                                </div>
+								
+                                <!-- 显示创始人 -->
+                                <div class="member_info" id="aa">
+                                    <a title="编辑创始人" class="c_edit member_edit" href="javascript:void(0)"></a>
+                                    <div class="m_name"><?=$arr['firm_founder']?></div>
+                                </div>
+
+                            </div><!-- end .member_wrap -->
+                        </dd>
+                    </dl>
+                </div> <!-- end #Member -->
+				<!--创始人start-->
+				<script>
+					$('#founder').click(function(){
+						var name = $('.m_name').html();
+						var founder = $('#name').val();
+						if(founder!=name)
+						{
+							$.ajax({
+								type:'get',
+								url:'index.php?r=create/founder',
+								data:'founder='+founder,
+								success:function(msg)
+								{
+									if(msg==1)
+									{
+										$('.m_name').html(founder);
+										$('#bb').addClass("dn");
+										$('#aa').removeClass("dn");
+									}
+								}
+							})
+						}
+						else
+						{
+							$('#bb').addClass("dn");
+							$('#aa').removeClass("dn");
+						}
+					})
+				
+				</script>
+				<!--创始人start-->
+            </div>
+        </div>
+        <script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/company.min.js" type="text/javascript"></script>
+        <script>
+            var avatar = {};
+            avatar.uploadComplate = function( data ){
+                var result = eval('('+ data +')');
+                if(result.success){
+                    jQuery('#logoShow img').attr("src",ctx+ '/'+result.content);
+                    jQuery.colorbox.close();
+                }
+            };
+        </script>
+        <div class="clear"></div>
+        <input type="hidden" value="d1035b6caa514d869727cff29a1c2e0c" id="resubmitToken">
+        <a rel="nofollow" title="回到顶部" id="backtop" style="display: inline;"></a>
+    </div><!-- end #container -->
+</div><!-- end #body -->
+
+<!--引入底部 start-->
+<?php $form = ActiveForm::begin(); ?>
+<?php $this->beginContent('@frontend/views/site/footer.html')?>
+<?php $this->endContent()?>
+<?php ActiveForm::end(); ?>
+<!--END-->
+
+<script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/core.min.js" type="text/javascript"></script>
+
+<!--  -->
+
+</body></html>

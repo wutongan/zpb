@@ -1,0 +1,2276 @@
+<!DOCTYPE HTML>
+<html xmlns:wb="http://open.weibo.com/wb">
+<body>
+<div id="body">
+        <?php
+use yii\widgets\ActiveForm;
+?>
+        <!--引入头部 start-->
+        <?php $form = ActiveForm::begin(); ?>
+        <?php $this->beginContent('@frontend/views/site/head.html')?>
+        <?php $this->endContent()?>
+        <?php ActiveForm::end(); ?>
+        <!--END-->
+
+    <div id="container">
+
+        <div class="clearfix">
+            <div class="content_l">
+                <?php if($query['pre_name']) { ?>
+                <div class="fl" id="resume_name">
+                    <div class="nameShow fl">
+                        <h1 title="<?= $query['pre_name']?>" ><span id="span1"><?= $query['pre_name']?></span>的简历</h1>
+                        <span id="button" >重命名</span> | <a target="_blank" href="index.php?r=resume/preview">预览</a>
+                    </div>
+                    <form class="fl dn dn1">
+                        <input type="text" value="<?= $query['pre_name']?>" name="resumeName" class="nameEdit c9" id="resumeName">
+                        <input type="button" id="button1" value="保存"> | <a target="_blank" href="index.php?r=resume/preview">预览</a>
+                        <span id="err1"></span>
+                    </form>
+                </div><!--end #resume_name-->
+                <?php } ?>
+                <div class="fr c5" id="lastChangedTime">最后一次更新：<span id="span_time"><?= date("Y-m-d H:i:s",$query['pre_time'])?></span></div><!--end #lastChangedTime-->
+                <div id="resumeScore">
+                    <div class="score fl">
+                        <canvas height="120" width="120" id="doughnutChartCanvas" style="width: 120px; height: 120px;"></canvas>
+                        <div style="" class="scoreVal">
+                        <?php if($query['pre_name'] || $query['suf_name'] ||  $query['stu_name']) { ?>
+                        <span>30</span>分
+                        <?php }else{ ?>
+                            <span>40</span>分
+                            <?php } ?>
+                        </div>
+                    </div>
+
+                    <div class="which fl">
+                        <div>工作经历最能体现自己的工作能力，且完善后才可投递简历哦！</div>
+                        <span rel="workExperience"><a>马上去完善</a></span>
+                    </div>
+                </div><!--end #resumeScore-->
+
+                <div class="profile_box" id="basicInfo">
+                    <h2>基本信息</h2>
+                    <span class="c_edit"></span>
+                    <div class="basicShow">
+            			            			<span id="span2">
+                                                    <?php if($query['pre_name']) { ?>
+                                                    <?= $query['pre_name']?>
+                                                    <?php }else{ ?>
+                                                    您的信息还不够,请完善一下基本信息吧!!!
+                                                    <?php } ?>
+                                                </span>
+                        <?php if($query['pre_sex']) { ?>
+                        | <?= $query['pre_sex']?>
+                        <?php } ?>
+                        <?php if($query['stu_name']) {?>
+                        | <?= $query['stu_name']?>
+                        <?php } ?>
+                        <?php if($query['suf_name']) { ?>
+
+                        <?php if($query['suf_name'] == '应届毕业生') { ?>
+                        |  应届毕业生
+                        <?php }else{ ?>
+                        | <?= $query['suf_name']?>工作经验
+                        <?php } ?>
+                        <?php } ?>
+                        <br>
+                        <?php if($query['sta_name']) { ?>
+ 目前状态 :  <?= $query['sta_name']?><br><?php } ?>
+                        <?php if($query['m_phone']) { ?>
+                         联系方式 :  <?= $query['m_phone']?>
+                        <?php } ?>
+                        <br/>
+                         接受面试通知的邮箱 :  <?= $query['m_email']?><br>
+
+                        <div class="m_portrait">
+                            <div></div>
+                            <?php if($query['pre_head']) { ?>
+                            <img width="120" height="120" alt="" id="header_img" src="frontend/assets/style/images/preson/<?= $query['pre_head']?>">
+                            <?php }else{ ?>
+                            <img width="120" height="120" alt="" id="header_img" src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/images/default_headpic.png">
+                            <?php } ?>
+                        </div>
+                    </div><!--end .basicShow-->
+
+                    <div class="basicEdit dn">
+                        <form id="profileForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <?php if($query['pre_name']) { ?>
+                                        <input type="text" placeholder="姓名" value="<?=$query['pre_name']?>" name="pre_name" id="pre_name">
+                                    <?php }else{ ?>
+                                    <input type="text" placeholder="姓名" value="" name="pre_name" id="pre_name">
+                                    <?php } ?>
+                                    </td>
+                                    <td valign="top"></td>
+                                    <td>
+                                        <ul class="profile_radio clearfix reset">
+                                            <?php if($query['pre_sex'] == '男') { ?>
+                                            <li class="current">
+                                                男<em></em>
+                                                <input type="radio"  name="pre_sex"
+                                                       checked="checked" value="男">
+                                            </li>
+                                            <li>
+                                                女<em></em>
+                                                <input type="radio" name="pre_sex" value="女">
+                                            </li>
+                                       <?php }else{ ?>
+                                            <li class="current">
+                                                男<em></em>
+                                                <input type="radio"  name="pre_sex" value="男">
+                                            </li>
+                                            <li>
+                                                女<em></em>
+                                                <input type="radio" name="pre_sex" checked="checked" value="女">
+                                            </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" id="topDegree" value="" name="stu_name">
+                                        <input type="button" value="<?= $query['stu_name']?>" id="select_topDegree" class="profile_select_190 profile_select_normal">
+                                        <div class="boxUpDown boxUpDown_190 dn" id="box_topDegree" style="display: none;">
+                                            <ul>
+                                                <?php foreach($study as $v) { ?>
+                                                <li><?= $v['stu_name']?></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" id="workyear" value="" name="suf_name">
+                                        <input type="button" value="<?=$query['suf_name']?>" id="select_workyear" class="profile_select_190 profile_select_normal">
+                                        <div class="boxUpDown boxUpDown_190 dn" id="box_workyear" style="display: none;">
+                                            <ul>
+                                                <?php foreach($suffer as $v) { ?>
+                                                <li><?= $v['suf_name']?></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="text" placeholder="手机号码" value="<?= $query['m_phone']?>" name="m_phone" id="tel">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td colspan="3">
+                                        <input type="text" placeholder="接收面试通知的邮箱" value="<?= $query['m_email']?>" name="m_email" id="email">
+                                        </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top"> </td>
+                                    <td colspan="3">
+                                        <input type="hidden" id="currentState" value="" name="sta_name">
+                                        <?php if($query['sta_name']) {  ?>
+                                        <input type="button" value="<?= $query['sta_name']?>" id="select_currentState" class="profile_select_410 profile_select_normal">
+                                        <?php }else{ ?>
+                                        <input type="button" value="目前状态" id="select_currentState" class="profile_select_410 profile_select_normal">
+                                        <?php } ?>
+                                        <div class="boxUpDown boxUpDown_410 dn" id="box_currentState" style="display: none;">
+                                            <ul>
+                                                <?php foreach($status as $v) { ?>
+                                                <li><?= $v['sta_name']?></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                        <span class="redstar" id="err2"></span>
+                                    </td>
+                                </tr>
+
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button2">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                        </form><!--end #profileForm-->
+                        <div class="new_portrait">
+                            <div class="portrait_upload" id="portraitNo">
+                                <span>上传自己的头像</span>
+                            </div>
+                            <div class="portraitShow dn" id="portraitShow">
+                                <img width="120" height="120" src="">
+                                <span>更换头像</span>
+                            </div>
+                            <input type="file"  title="支持jpg、jpeg、gif、png格式，文件小于5M"  name="headPic" id="headPic">
+                            <em>
+                                尺寸：120*120px <br>
+                                大小：小于5M
+                            </em>
+                            <span style="display:none;" id="headPic_error" class="error"></span>
+                            <input type="hidden" name="hid" value="<?= $query['pre_head']?>"/>
+                        </div><!--end .new_portrait-->
+                    </div><!--end .basicEdit-->
+                    <input type="hidden" id="nameVal" value="<?= $query['pre_name']?>">
+                    <input type="hidden" id="genderVal" value="<?= $query['pre_sex']?>">
+                    <?php if($query['stu_name']) {  ?>
+                    <input type="hidden" id="topDegreeVal" value="<?= $query['stu_name']?>">
+                    <?php }else{ ?>
+                    <input type="hidden" id="topDegreeVal" value="大专">
+                    <?php } ?>
+
+                    <?php if($query['suf_name']) { ?>
+                    <input type="hidden" id="workyearVal" value="<?= $query['suf_name']?>">
+                    <?php }else{ ?>
+                    <input type="hidden" id="workyearVal" value="应届毕业生">
+                    <?php } ?>
+                    <input type="hidden" id="currentStateVal" value="">
+                    <input type="hidden" id="emailVal" value="<?= $query['m_email']?>">
+                    <input type="hidden" id="telVal" value="<?= $query['m_phone']?>">
+
+                    <input type="hidden" id="pageType" value="<?= $query['sta_name']?>">
+                </div><!--end #basicInfo-->
+
+                <div class="profile_box" id="expectJob">
+                    <h2>期望工作</h2>
+                    <span class="c_edit dn"></span>
+                    <div class="expectShow dn">
+                        <span></span>
+                    </div><!--end .expectShow-->
+                    <?php if($query['res_hope']) { ?>
+                    <div class="expectEdit dn">
+                        <form id="expectForm">
+                            <table>
+                                <tbody><tr>
+                                    <td>
+                                        <input type="hidden" id="expectCity" value="" name="expectCity">
+
+                                        <input type="button" value="<?= $query['res_hope']['expectCity'] ?>" id="select_expectCity" class="profile_select_287 profile_select_normal">
+
+                                        <div class="boxUpDown boxUpDown_596 dn" id="box_expectCity" style="display: none;">
+                                            <dl>
+                                                <dt>热门城市</dt>
+                                                <dd>
+                                                    <span>北京</span>
+                                                    <span>上海</span>
+                                                    <span>广州</span>
+                                                    <span>深圳</span>
+                                                    <span>成都</span>
+                                                    <span>杭州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>ABCDEF</dt>
+                                                <dd>
+                                                    <span>北京</span>
+                                                    <span>长春</span>
+                                                    <span>成都</span>
+                                                    <span>重庆</span>
+                                                    <span>长沙</span>
+                                                    <span>常州</span>
+                                                    <span>东莞</span>
+                                                    <span>大连</span>
+                                                    <span>佛山</span>
+                                                    <span>福州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>GHIJ</dt>
+                                                <dd>
+                                                    <span>贵阳</span>
+                                                    <span>广州</span>
+                                                    <span>哈尔滨</span>
+                                                    <span>合肥</span>
+                                                    <span>海口</span>
+                                                    <span>杭州</span>
+                                                    <span>惠州</span>
+                                                    <span>金华</span>
+                                                    <span>济南</span>
+                                                    <span>嘉兴</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>KLMN</dt>
+                                                <dd>
+                                                    <span>昆明</span>
+                                                    <span>廊坊</span>
+                                                    <span>宁波</span>
+                                                    <span>南昌</span>
+                                                    <span>南京</span>
+                                                    <span>南宁</span>
+                                                    <span>南通</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>OPQR</dt>
+                                                <dd>
+                                                    <span>青岛</span>
+                                                    <span>泉州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>STUV</dt>
+                                                <dd>
+                                                    <span>上海</span>
+                                                    <span>石家庄</span>
+                                                    <span>绍兴</span>
+                                                    <span>沈阳</span>
+                                                    <span>深圳</span>
+                                                    <span>苏州</span>
+                                                    <span>天津</span>
+                                                    <span>太原</span>
+                                                    <span>台州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>WXYZ</dt>
+                                                <dd>
+                                                    <span>武汉</span>
+                                                    <span>无锡</span>
+                                                    <span>温州</span>
+                                                    <span>西安</span>
+                                                    <span>厦门</span>
+                                                    <span>烟台</span>
+                                                    <span>珠海</span>
+                                                    <span>中山</span>
+                                                    <span>郑州</span>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <ul class="profile_radio clearfix reset">
+                                      <?php if($query['res_hope']['type_mold'] =='全职') { ?>
+                                            <li class="current">
+                                                全职<em></em>
+                                                <input type="radio" checked="" name="type" value="全职">
+                                            </li>
+                                            <li>
+                                                兼职<em></em>
+                                                <input type="radio" name="type" value="兼职">
+                                            </li>
+                                            <li>
+                                                实习<em></em>
+                                                <input type="radio" name="type" value="实习">
+                                            </li>
+         <?php }else if($query['res_hope']['type_mold'] =='兼职') { ?>                                    <li >
+                                            全职<em></em>
+                                            <input type="radio" checked="" name="type" value="全职">
+                                        </li>
+                                            <li class="current">
+                                                兼职<em></em>
+                                                <input type="radio" name="type" value="兼职">
+                                            </li>
+                                            <li>
+                                                实习<em></em>
+                                                <input type="radio" name="type" value="实习">
+                                            </li>
+                                            <?php }else{ ?>
+                                            <li >
+                                                全职<em></em>
+                                                <input type="radio" checked="" name="type" value="全职">
+                                            </li>
+                                            <li>
+                                                兼职<em></em>
+                                                <input type="radio" name="type" value="兼职">
+                                            </li>
+                                            <li class="current">
+                                                实习<em></em>
+                                                <input type="radio" name="type" value="实习">
+                                            </li>
+                                            <?php } ?>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" placeholder="期望职位，如：产品经理" value="<?= $query['res_hope']['expectPosition'] ?>" name="expectPosition" id="expectPosition">&nbsp;&nbsp;<span class="redstar" id="err3"></span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" id="expectSalary" value="" name="expectSalary">
+                                        <input type="button" value="<?=$query['res_hope']['expectSalary']?>"  id="select_expectSalary" class="profile_select_287 profile_select_normal">
+
+                                        <div class="boxUpDown boxUpDown_287 dn" id="box_expectSalary" style="display: none;">
+                                            <ul>
+                                                <li>2k以下</li>
+                                                <li>2k-5k</li>
+                                                <li>5k-10k</li>
+                                                <li>10k-15k</li>
+                                                <li>15k-25k</li>
+                                                <li>25k-50k</li>
+                                                <li>50k以上</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" id="button3" value="保 存" class="btn_profile_save">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                        </form><!--end #expectForm-->
+                    </div><!--end .expectEdit-->
+                    <div class="expectAdd pAdd">
+                        期望工作地 : <?= $query['res_hope']['expectCity']?>&nbsp;&nbsp;|&nbsp;&nbsp;期望职位 : <?= $query['res_hope']['expectPosition']?>
+                        <br/>期望薪资 : <?= $query['res_hope']['expectSalary']?>
+                        <span>修改期望工作</span>
+                    </div><!--end .expectAdd-->
+
+                    <input type="hidden" id="expectJobVal" value="">
+                    <input type="hidden" id="expectCityVal" value="">
+                    <input type="hidden" id="typeVal" value="">
+                    <input type="hidden" id="expectPositionVal" value="">
+                    <input type="hidden" id="expectSalaryVal" value="">
+                    <?php }else{ ?>
+                    <div class="expectEdit dn">
+                        <form id="expectForm">
+                            <table>
+                                <tbody><tr>
+                                    <td>
+                                        <input type="hidden" id="expectCity" value="" name="expectCity">
+                                        <input type="button" value="期望城市，如：北京" id="select_expectCity" class="profile_select_287 profile_select_normal">
+                                        <div class="boxUpDown boxUpDown_596 dn" id="box_expectCity" style="display: none;">
+                                            <dl>
+                                                <dt>热门城市</dt>
+                                                <dd>
+                                                    <span>北京</span>
+                                                    <span>上海</span>
+                                                    <span>广州</span>
+                                                    <span>深圳</span>
+                                                    <span>成都</span>
+                                                    <span>杭州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>ABCDEF</dt>
+                                                <dd>
+                                                    <span>北京</span>
+                                                    <span>长春</span>
+                                                    <span>成都</span>
+                                                    <span>重庆</span>
+                                                    <span>长沙</span>
+                                                    <span>常州</span>
+                                                    <span>东莞</span>
+                                                    <span>大连</span>
+                                                    <span>佛山</span>
+                                                    <span>福州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>GHIJ</dt>
+                                                <dd>
+                                                    <span>贵阳</span>
+                                                    <span>广州</span>
+                                                    <span>哈尔滨</span>
+                                                    <span>合肥</span>
+                                                    <span>海口</span>
+                                                    <span>杭州</span>
+                                                    <span>惠州</span>
+                                                    <span>金华</span>
+                                                    <span>济南</span>
+                                                    <span>嘉兴</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>KLMN</dt>
+                                                <dd>
+                                                    <span>昆明</span>
+                                                    <span>廊坊</span>
+                                                    <span>宁波</span>
+                                                    <span>南昌</span>
+                                                    <span>南京</span>
+                                                    <span>南宁</span>
+                                                    <span>南通</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>OPQR</dt>
+                                                <dd>
+                                                    <span>青岛</span>
+                                                    <span>泉州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>STUV</dt>
+                                                <dd>
+                                                    <span>上海</span>
+                                                    <span>石家庄</span>
+                                                    <span>绍兴</span>
+                                                    <span>沈阳</span>
+                                                    <span>深圳</span>
+                                                    <span>苏州</span>
+                                                    <span>天津</span>
+                                                    <span>太原</span>
+                                                    <span>台州</span>
+                                                </dd>
+                                            </dl>
+                                            <dl>
+                                                <dt>WXYZ</dt>
+                                                <dd>
+                                                    <span>武汉</span>
+                                                    <span>无锡</span>
+                                                    <span>温州</span>
+                                                    <span>西安</span>
+                                                    <span>厦门</span>
+                                                    <span>烟台</span>
+                                                    <span>珠海</span>
+                                                    <span>中山</span>
+                                                    <span>郑州</span>
+                                                </dd>
+                                            </dl>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <ul class="profile_radio clearfix reset">
+                                            <li class="current">
+                                                全职<em></em>
+                                                <input type="radio" checked="" name="type" value="全职">
+                                            </li>
+                                            <li>
+                                                兼职<em></em>
+                                                <input type="radio" name="type" value="兼职">
+                                            </li>
+                                            <li>
+                                                实习<em></em>
+                                                <input type="radio" name="type" value="实习">
+                                            </li>
+                                        </ul>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="text" placeholder="期望职位，如：产品经理" value="" name="expectPosition" id="expectPosition">&nbsp;&nbsp;<span class="redstar" id="err3"></span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" id="expectSalary" value="" name="expectSalary">
+                                        <input type="button" value="期望月薪" id="select_expectSalary" class="profile_select_287 profile_select_normal">
+                                        <div class="boxUpDown boxUpDown_287 dn" id="box_expectSalary" style="display: none;">
+                                            <ul>
+                                                <li>2k以下</li>
+                                                <li>2k-5k</li>
+                                                <li>5k-10k</li>
+                                                <li>10k-15k</li>
+                                                <li>15k-25k</li>
+                                                <li>25k-50k</li>
+                                                <li>50k以上</li>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" id="button3" value="保 存" class="btn_profile_save">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                        </form><!--end #expectForm-->
+                    </div><!--end .expectEdit-->
+                    <div class="expectAdd pAdd">
+                        填写准确的期望工作能大大提高求职成功率哦…<br>
+                        快来添加期望工作吧！
+                        <span>添加期望工作</span>
+                    </div><!--end .expectAdd-->
+                    <?php } ?>
+                </div><!--end #expectJob-->
+
+                <div class="profile_box" id="workExperience">
+                    <h2>工作经历  <span> （投递简历时必填）</span></h2>
+                    <span class="c_add dn"></span>
+                    <?php if($query['res_works_undergo']) { ?>
+
+                    <div class="experienceEdit dn">
+                        <form class="experienceForm">
+                            <table>
+                               <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="公司名称" name="companyName" value="<?= $query['res_works_undergo']['companyName']?>">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="职位名称，如：产品经理" name="positionName" value="<?= $query['res_works_undergo']['positionName']?>">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyYearStart" value="" name="companyYearStart">
+
+
+                                            <input type="button" value="<?= $query['res_works_undergo']['companyMonthEnd']?>" class="profile_select_139 profile_select_normal select_companyYearStart">
+
+                                            <div class="box_companyYearStart boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyMonthStart" value="" name="companyMonthStart">
+                                            <input type="button" value="开始月份" class="profile_select_139 profile_select_normal select_companyMonthStart">
+                                            <div style="display: none;" class="box_companyMonthStart boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"><span class="redstar" id="err4"></span></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyYearEnd" value="" name="companyYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_companyYearEnd">
+                                            <div class="box_companyYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyMonthEnd" value="" name="companyMonthEnd">
+                                            <input type="button" value="" class="profile_select_139 profile_select_normal select_companyMonthEnd">
+                                            <div style="display: none;" class="box_companyMonthEnd boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button4">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                               </table>
+                            <input type="hidden" class="expId" value="">
+                        </form><!--end .experienceForm-->
+                    </div><!--end .experienceEdit-->
+
+                    <div class="experienceAdd pAdd">
+                        公司名称 : &nbsp;<?= $query['res_works_undergo']['companyName']?>&nbsp;&nbsp;|&nbsp;&nbsp;职位名称 :&nbsp;<?= $query['res_works_undergo']['positionName']?>
+                        <br/>
+                        开始 -- 结束&nbsp;:&nbsp;&nbsp;<?= $query['res_works_undergo']['companyYearStart']?> 年 <?= $query['res_works_undergo']['companyMonthStart']?>月 至 <?= $query['res_works_undergo']['companyYearEnd']?> 年 <?= $query['res_works_undergo']['companyMonthEnd']?>月
+                        <span>修改工作经历</span>
+                    </div><!--end .experienceAdd-->
+                    <?php }else{ ?>
+                    <div class="experienceEdit dn">
+                        <form class="experienceForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="公司名称" name="companyName" class="companyName" val="">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="职位名称，如：产品经理" name="positionName" class="positionName">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyYearStart" value="" name="companyYearStart">
+                                            <input type="button" value="开始年份" class="profile_select_139 profile_select_normal select_companyYearStart">
+                                            <div class="box_companyYearStart boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyMonthStart" value="" name="companyMonthStart">
+                                            <input type="button" value="开始月份" class="profile_select_139 profile_select_normal select_companyMonthStart">
+                                            <div style="display: none;" class="box_companyMonthStart boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"><span class="redstar" id="err4"></span></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyYearEnd" value="" name="companyYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_companyYearEnd">
+                                            <div class="box_companyYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="companyMonthEnd" value="" name="companyMonthEnd">
+                                            <input type="button" value="结束月份" class="profile_select_139 profile_select_normal select_companyMonthEnd">
+                                            <div style="display: none;" class="box_companyMonthEnd boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button4">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" class="expId" value="">
+                        </form><!--end .experienceForm-->
+                    </div><!--end .experienceEdit-->
+
+                    <div class="experienceAdd pAdd">
+                        工作经历最能体现自己的工作能力，<br>
+                        且完善后才可投递简历哦！
+                        <span>添加工作经历</span>
+                    </div><!--end .experienceAdd-->
+                    <?php } ?>
+                </div><!--end #workExperience-->
+
+                <div class="profile_box" id="projectExperience">
+                    <h2>项目经验</h2>
+                    <span class="c_add dn"></span>
+                    <div class="projectShow dn">
+                        <ul class="plist clearfix">
+                        </ul>
+                    </div><!--end .projectShow-->
+
+                    <?php if($query['res_project_experiences']) { ?>
+                    <div class="projectEdit dn">
+                        <form class="projectForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="项目名称" name="projectName" value="<?=$query['res_project_experiences']['projectName']?>">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="担任职务，如：产品负责人" name="thePost" value="<?=$query['res_project_experiences']['thePost']?>">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectYearStart" value="" name="projectYearStart">
+                                            <input type="button" value="开始年份" class="profile_select_139 profile_select_normal select_projectYearStart">
+                                            <div class="box_projectYearStart  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectMonthStart" value="" name="projectMonthStart">
+                                            <input type="button" value="开始月份" class="profile_select_139 profile_select_normal select_projectMonthStart">
+                                            <div style="display: none;" class="box_projectMonthStart boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectYearEnd" value="" name="projectYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_projectYearEnd">
+                                            <div class="box_projectYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectMonthEnd" value="" name="projectMonthEnd">
+                                            <input type="button" value="结束月份" class="profile_select_139 profile_select_normal select_projectMonthEnd">
+                                            <div style="display: none;" class="box_projectMonthEnd boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top"></td>
+                                    <td colspan="3">
+                                        <?php if($query['res_project_experiences']['projectDescription']) { ?>
+                                        <textarea class="s_textarea" name="projectDescription" placeholder=""><?=$query['res_project_experiences']['projectDescription']?></textarea>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div><span class="redstar" id="err5"></span>
+                                        <?php }else{ ?>
+                                        <textarea class="s_textarea" name="projectDescription" placeholder="项目描述"></textarea><div class="word_count">你还可以输入 <span>500</span> 字</div><span id="err5" class="redstar"></span>
+
+
+                                        <?php } ?>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td colspan="2">
+                                        <textarea placeholder="职责描述" name="ResponsDescription" class="ResponsDescription s_textarea"></textarea>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <td valign="top"></td>
+                                    <td colspan="3">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button5">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" value="" class="projectId">
+                        </form><!--end .projectForm-->
+                    </div><!--end .projectEdit-->
+                    <div class="projectAdd pAdd">
+                        项目名称&nbsp;: <?=$query['res_project_experiences']['projectName']?>&nbsp;&nbsp;|&nbsp;&nbsp;担任职务&nbsp;: <?=$query['res_project_experiences']['thePost']?>
+                        <br/>
+                        开始 -- 结束&nbsp;:&nbsp;&nbsp;<?= $query['res_project_experiences']['projectYearStart']?> 年 <?= $query['res_project_experiences']['projectMonthStart']?>月 至 <?= $query['res_project_experiences']['projectYearEnd']?> 年 <?= $query['res_project_experiences']['projectMonthEnd']?>月
+                        <span>修改项目经验</span>
+                    </div><!--end .projectAdd-->
+
+                    <?php }else{ ?>
+                    <div class="projectEdit dn">
+                        <form class="projectForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="项目名称" name="projectName" class="projectName">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="担任职务，如：产品负责人" name="thePost" class="thePost">
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectYearStart" value="" name="projectYearStart">
+                                            <input type="button" value="开始年份" class="profile_select_139 profile_select_normal select_projectYearStart">
+                                            <div class="box_projectYearStart  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectMonthStart" value="" name="projectMonthStart">
+                                            <input type="button" value="开始月份" class="profile_select_139 profile_select_normal select_projectMonthStart">
+                                            <div style="display: none;" class="box_projectMonthStart boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectYearEnd" value="" name="projectYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_projectYearEnd">
+                                            <div class="box_projectYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2016</li>
+                                                    <li>2015</li>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="projectMonthEnd" value="" name="projectMonthEnd">
+                                            <input type="button" value="结束月份" class="profile_select_139 profile_select_normal select_projectMonthEnd">
+                                            <div style="display: none;" class="box_projectMonthEnd boxUpDown boxUpDown_139 dn">
+                                                <ul>
+                                                    <li>01</li><li>02</li><li>03</li><li>04</li><li>05</li><li>06</li><li>07</li><li>08</li><li>09</li><li>10</li><li>11</li><li>12</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top"></td>
+                                    <td colspan="3">
+                                        <textarea class="projectDescription s_textarea" name="projectDescription" placeholder="项目描述"></textarea></span>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div><span id="err5" class="redstar"></span>
+                                    </td>
+                                </tr>
+                                <!-- <tr>
+                                    <td colspan="2">
+                                        <textarea placeholder="职责描述" name="ResponsDescription" class="ResponsDescription s_textarea"></textarea>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div>
+                                    </td>
+                                </tr> -->
+                                <tr>
+                                    <td valign="top"></td>
+                                    <td colspan="3">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button5">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" value="" class="projectId">
+                        </form><!--end .projectForm-->
+                    </div><!--end .projectEdit-->
+                    <div class="projectAdd pAdd">
+                        项目经验是用人单位衡量人才能力的重要指标哦！<br>
+                        来说说让你难忘的项目吧！
+                        <span>添加项目经验</span>
+                    </div><!--end .projectAdd-->
+                    <?php } ?>
+                </div><!--end #projectExperience-->
+
+                <div class="profile_box" id="educationalBackground">
+                    <h2>教育背景<span>（投递简历时必填）</span></h2>
+                    <span class="c_add dn"></span>
+                    <?php if($query['res_study_undergo']) { ?>
+                    <div class="educationalEdit dn">
+                        <form class="educationalForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="学校名称" name="schoolName" value="<?= $query['res_study_undergo']['schoolName']?>">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" class="degree" id="degree" value="" name="degree">
+                                        <?php if($query['res_study_undergo']['degree']) { ?>
+                                        <input type="button" value="<?=$query['res_study_undergo']['degree']?>" class="profile_select_287 profile_select_normal select_degree">
+                                        <?php }else{ ?>
+                                        <input type="button" value="学历" class="profile_select_287 profile_select_normal select_degree">
+                                        <?php } ?>
+                                        <div class="box_degree boxUpDown boxUpDown_287 dn" style="display: none;">
+                                            <ul>
+                                                <?php foreach($study as $v) { ?>
+                                                <li><?= $v['stu_name']?></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="专业名称" name="professionalName" value="<?= $query['res_study_undergo']['professionalName']?>">
+                                        <div class="clear"><span id="err6" class="redstar"></span></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="schoolYearStart" value="" name="schoolYearStart">
+                                            <input type="button" value="开始年份" class="profile_select_139 profile_select_normal select_schoolYearStart">
+                                            <div class="box_schoolYearStart boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="schoolYearEnd" value="" name="schoolYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_schoolYearEnd">
+                                            <div class="box_schoolYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                        <input type="button" id="button6" value="保 存" class="btn_profile_save">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" class="eduId" value="">
+                            <input type="hidden" class="degreeVal" value="<?=$query['res_study_undergo']['degree']?>">
+                        </form><!--end .educationalForm-->
+                    </div><!--end .educationalEdit-->
+
+
+                    <div class="educationalAdd pAdd">
+                        学校名称&nbsp;:&nbsp;<?= $query['res_study_undergo']['schoolName']?>&nbsp;|&nbsp;学历&nbsp;:&nbsp;<?=$query['res_study_undergo']['degree']?>
+                        &nbsp;|&nbsp;专业名称&nbsp;:&nbsp;<?= $query['res_study_undergo']['professionalName']?>
+                        <br/>
+                        开始 -- 结束&nbsp;:&nbsp;&nbsp; <?= $query['res_study_undergo']['schoolYearStart']?> 年  至  <?= $query['res_study_undergo']['schoolYearEnd']?> 年
+                        <span>添加教育经历</span>
+                    </div><!--end .educationalAdd-->
+                    <?php }else{ ?>
+                    <div class="educationalEdit dn">
+                        <form class="educationalForm">
+                            <table>
+                                <tbody><tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="学校名称" name="schoolName" class="schoolName">
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="hidden" class="degree" value="" name="degree">
+                                        <input type="button" value="学历" class="profile_select_287 profile_select_normal select_degree">
+                                        <div class="box_degree boxUpDown boxUpDown_287 dn" style="display: none;">
+                                            <ul>
+                                                <?php foreach($study as $v) { ?>
+                                                <li><?= $v['stu_name']?></li>
+                                                <?php } ?>
+                                            </ul>
+                                        </div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <input type="text" placeholder="专业名称" name="professionalName" class="professionalName">
+                                        <div class="clear"><span id="err6" class="redstar"></span></div>
+                                    </td>
+                                    <td valign="top">
+                                        <span class="redstar">*</span>
+                                    </td>
+                                    <td>
+                                        <div class="fl">
+                                            <input type="hidden" class="schoolYearStart" value="" name="schoolYearStart">
+                                            <input type="button" value="开始年份" class="profile_select_139 profile_select_normal select_schoolYearStart">
+                                            <div class="box_schoolYearStart boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="fl">
+                                            <input type="hidden" class="schoolYearEnd" value="" name="schoolYearEnd">
+                                            <input type="button" value="结束年份" class="profile_select_139 profile_select_normal select_schoolYearEnd">
+                                            <div class="box_schoolYearEnd  boxUpDown boxUpDown_139 dn" style="display: none;">
+                                                <ul>
+                                                    <li>2014</li>
+                                                    <li>2013</li>
+                                                    <li>2012</li>
+                                                    <li>2011</li>
+                                                    <li>2010</li>
+                                                    <li>2009</li>
+                                                    <li>2008</li>
+                                                    <li>2007</li>
+                                                    <li>2006</li>
+                                                    <li>2005</li>
+                                                    <li>2004</li>
+                                                    <li>2003</li>
+                                                    <li>2002</li>
+                                                    <li>2001</li>
+                                                    <li>2000</li>
+                                                    <li>1999</li>
+                                                    <li>1998</li>
+                                                    <li>1997</li>
+                                                    <li>1996</li>
+                                                    <li>1995</li>
+                                                    <li>1994</li>
+                                                    <li>1993</li>
+                                                    <li>1992</li>
+                                                    <li>1991</li>
+                                                    <li>1990</li>
+                                                    <li>1989</li>
+                                                    <li>1988</li>
+                                                    <li>1987</li>
+                                                    <li>1986</li>
+                                                    <li>1985</li>
+                                                    <li>1984</li>
+                                                    <li>1983</li>
+                                                    <li>1982</li>
+                                                    <li>1981</li>
+                                                    <li>1980</li>
+                                                    <li>1979</li>
+                                                    <li>1978</li>
+                                                    <li>1977</li>
+                                                    <li>1976</li>
+                                                    <li>1975</li>
+                                                    <li>1974</li>
+                                                    <li>1973</li>
+                                                    <li>1972</li>
+                                                    <li>1971</li>
+                                                    <li>1970</li>
+                                                </ul>
+                                            </div>
+                                        </div>
+                                        <div class="clear"></div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td></td>
+                                    <td colspan="3">
+                                        <input type="button" id="button6" value="保 存" class="btn_profile_save">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" class="eduId" value="">
+                        </form><!--end .educationalForm-->
+                    </div><!--end .educationalEdit-->
+                    <div class="educationalAdd pAdd">
+                        教育背景可以充分体现你的学习和专业能力, <br/>
+                        且完善后才可投递简历哦 !
+                        <span>添加教育经历</span>
+                    </div><!--end .educationalAdd-->
+                    <?php } ?>
+                </div><!--end #educationalBackground-->
+
+                <div class="profile_box" id="selfDescription">
+                    <h2>自我描述</h2>
+                    <span class="c_edit dn"></span>
+                    <div class="descriptionShow dn">
+
+                    </div><!--end .descriptionShow-->
+                    <?php if($query['res_desc']) { ?>
+                    <div class="descriptionEdit dn">
+                        <form class="descriptionForm">
+                            <table>
+                                <tbody><tr>
+                                    <td colspan="2">
+                                        <textarea class="s_textarea" name="selfDescription" placeholder=""><?= $query['res_desc']?></textarea>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button7">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                        </form><!--end .descriptionForm-->
+                    </div><!--end .descriptionEdit-->
+                    <div class="descriptionAdd pAdd">
+                        让企业了解多元化的你！要完善一下吗 ?
+                        <span>修改自我描述</span>
+                    </div><!--end .descriptionAdd-->
+                    <?php }else{ ?>
+                    <div class="descriptionEdit dn">
+                        <form class="descriptionForm">
+                            <table>
+                                <tbody><tr>
+                                    <td colspan="2">
+                                        <textarea class="selfDescription s_textarea" name="selfDescription" placeholder=""></textarea>
+                                        <div class="word_count">你还可以输入 <span>500</span> 字</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2">
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button7">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                        </form><!--end .descriptionForm-->
+                    </div><!--end .descriptionEdit-->
+                    <div class="descriptionAdd pAdd">
+                        描述你的性格、爱好以及吸引人的经历等，<br>
+                        让企业了解多元化的你！
+                        <span>添加自我描述</span>
+                    </div><!--end .descriptionAdd-->
+                    <?php } ?>
+                </div><!--end #selfDescription-->
+
+                <div class="profile_box" id="worksShow">
+                    <h2>作品展示</h2>
+                    <span class="c_add dn"></span>
+                    <div class="workShow dn">
+                        <ul class="slist clearfix">
+                        </ul>
+                    </div><!--end .workShow-->
+
+                    <?php if($query['res_works']) {?>
+                    <div class="workEdit dn">
+                        <form class="workForm">
+                            <table>
+                                <tbody><tr>
+                                    <td>
+                                        <input type="text" placeholder="请输入作品链接" name="workLink" value="<?=$query['res_works']['workLink']?>">&nbsp;&nbsp;<span id="err8" class="redstar"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <textarea maxlength="100" class="s_textarea" name="workDescription" placeholder="请输入说明文字"><?=$query['res_works']['workDescription']?></textarea>
+                                        <div class="word_count">你还可以输入 <span>100</span> 字</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button8">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" class="showId" value="">
+                        </form><!--end .workForm-->
+                    </div><!--end .workEdit-->
+                    <div class="workAdd pAdd">
+                        作品链接&nbsp;:&nbsp;<?=$query['res_works']['workLink']?><br/>
+
+
+                        <span>修改作品展示</span>
+                    </div><!--end .workAdd-->
+                    <?php }else{ ?>
+                    <div class="workEdit dn">
+                        <form class="workForm">
+                            <table>
+                                <tbody><tr>
+                                    <td>
+                                        <input type="text" placeholder="请输入作品链接" name="workLink" class="workLink"><span id="err8" class="redstar"></span>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <textarea maxlength="100" class="s_textarea" name="workDescription" placeholder="请输入说明文字"></textarea>
+                                        <div class="word_count">你还可以输入 <span>100</span> 字</div>
+                                    </td>
+                                </tr>
+                                <tr>
+                                    <td>
+                                        <input type="button" value="保 存" class="btn_profile_save" id="button8">
+                                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                                    </td>
+                                </tr>
+                                </tbody></table>
+                            <input type="hidden" class="showId" value="">
+                        </form><!--end .workForm-->
+                    </div><!--end .workEdit-->
+                    <div class="workAdd pAdd">
+                        好作品会说话！<br>
+                        快来秀出你的作品打动企业吧！
+                        <span>添加作品展示</span>
+                    </div><!--end .workAdd-->
+                    <?php } ?>
+                </div><!--end #worksShow-->
+                <input type="hidden" id="resumeId" value="268472">
+            </div><!--end .content_l-->
+            <div class="content_r">
+                <div class="mycenterR" id="myInfo">
+                    <h2>我的信息</h2>
+                    <a target="_blank" href="index.php?r=resume/collections">我收藏的职位</a>
+                    <br>
+                    <a target="_blank" href="index.php?r=resume/subscribe">我订阅的职位</a>
+                </div><!--end #myInfo-->
+
+                <div class="mycenterR" id="myResume">
+                    <h2>我的附件简历
+                        <a title="上传附件简历" href="#uploadFile" class="inline cboxElement">上传简历</a>
+                    </h2>
+                    <div class="resumeUploadDiv">
+                        暂无附件简历
+                    </div>
+                </div><!--end #myResume-->
+
+                <div class="mycenterR" id="resumeSet">
+                    <h2>投递简历设置  <span>修改设置</span></h2>
+                    <!-- -1 (0=附件， 1=在线， 其他=未设置) -->
+                    <div class="noSet set0 dn">默认使用<span>附件简历</span>进行投递</div>
+                    <div class="noSet set1 dn">默认使用<span>在线简历</span>进行投递</div>
+                    <div class="noSet">暂未设置默认投递简历</div>
+                    <input type="hidden" class="defaultResume" value="-1">
+                    <form class="dn" id="resumeSetForm">
+                        <label><input type="radio" value="1" class="resume1" name="resume">默认使用<span>在线简历</span>进行投递</label>
+                        <label><input type="radio" value="0" class="resume0" name="resume">默认使用<span>附件简历</span>进行投递</label>
+                        <span class="setTip error"></span>
+                        <div class="resumeTip">设置后投递简历时将不再提醒</div>
+                        <input type="submit" value="保 存" class="btn_profile_save">
+                        <a class="btn_profile_cancel" href="javascript:;">取 消</a>
+                    </form>
+                </div><!--end #resumeSet-->
+
+                <div class="mycenterR" id="myShare">
+                    <h2>当前每日投递量：10个</h2>
+                    <a target="_blank" href="h/share/invite.html">邀请好友，提升投递量</a>
+                </div><!--end #myShare-->
+
+
+                <div class="greybg qrcode mt20">
+                    <img width="242" height="242" alt="拉勾微信公众号二维码" src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/images/qr_resume.png">
+                    <span class="c7">微信扫一扫，轻松找工作</span>
+                </div>
+            </div><!--end .content_r-->
+        </div>
+
+        <input type="hidden" id="userid" name="userid" value="314873">
+
+        <!-------------------------------------弹窗lightbox ----------------------------------------->
+        <div style="display:none;">
+            <!-- 上传简历 -->
+            <div class="popup" id="uploadFile">
+                <table width="100%">
+                    <tbody><tr>
+                        <td align="center">
+                            <form>
+                                <a class="btn_addPic" href="javascript:void(0);">
+                                    <span>选择上传文件</span>
+                                    <input type="file" onchange="file_check(this,'h/nearBy/updateMyResume.json','resumeUpload')" class="filePrew" id="resumeUpload" name="newResume" size="3" title="支持word、pdf、ppt、txt、wps格式文件，大小不超过10M" tabindex="3">
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="left">支持word、pdf、ppt、txt、wps格式文件<br>文件大小需小于10M</td>
+                    </tr>
+                    <tr>
+                        <td align="left" style="color:#dd4a38; padding-top:10px;">注：若从其它网站下载的word简历，请将文件另存为.docx格式后上传</td>
+                    </tr>
+                    <tr>
+                        <td align="center"><img width="55" height="16" alt="loading" style="visibility: hidden;" id="loadingImg" src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/images/loading.gif"></td>
+                    </tr>
+                    </tbody></table>
+            </div><!--/#uploadFile-->
+
+            <!-- 简历上传成功 -->
+            <div class="popup" id="uploadFileSuccess">
+                <h4>简历上传成功！</h4>
+                <table width="100%">
+                    <tbody><tr>
+                        <td align="center"><p>你可以将简历投给你中意的公司了。</p></td>
+                    </tr>
+                    <tr>
+                        <td align="center"><a class="btn_s" href="javascript:;">确&nbsp;定</a></td>
+                    </tr>
+                    </tbody></table>
+            </div><!--/#uploadFileSuccess-->
+
+            <!-- 没有简历请上传 -->
+            <div class="popup" id="deliverResumesNo">
+                <table width="100%">
+                    <tbody><tr>
+                        <td align="center"><p class="font_16">你在拉勾还没有简历，请先上传一份</p></td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <form>
+                                <a class="btn_addPic" href="javascript:void(0);">
+                                    <span>选择上传文件</span>
+                                    <input type="file" onchange="file_check(this,'h/nearBy/updateMyResume.json','resumeUpload1')" class="filePrew" id="resumeUpload1" name="newResume" size="3" title="支持word、pdf、ppt、txt、wps格式文件，大小不超过10M">
+                                </a>
+                            </form>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">支持word、pdf、ppt、txt、wps格式文件，大小不超过10M</td>
+                    </tr>
+                    </tbody></table>
+            </div><!--/#deliverResumesNo-->
+
+            <!-- 上传附件简历操作说明-重新上传 -->
+            <div class="popup" id="fileResumeUpload">
+                <table width="100%">
+                    <tbody><tr>
+                        <td>
+                            <div class="f18 mb10">请上传标准格式的word简历</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="f16">
+                                操作说明：<br>
+                                打开需要上传的文件 - 点击文件另存为 - 选择.docx - 保存
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <a title="上传附件简历" href="#uploadFile" class="inline btn cboxElement">重新上传</a>
+                        </td>
+                    </tr>
+                    </tbody></table>
+            </div><!--/#fileResumeUpload-->
+
+            <!-- 上传附件简历操作说明-重新上传 -->
+            <div class="popup" id="fileResumeUploadSize">
+                <table width="100%">
+                    <tbody><tr>
+                        <td>
+                            <div class="f18 mb10">上传文件大小超出限制</div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <div class="f16">
+                                提示：<br>
+                                单个附件不能超过10M，请重新选择附件简历！
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td align="center">
+                            <a title="上传附件简历" href="#uploadFile" class="inline btn cboxElement">重新上传</a>
+                        </td>
+                    </tr>
+                    </tbody></table>
+            </div><!--/#deliverResumeConfirm-->
+
+        </div>
+        <!------------------------------------- end ----------------------------------------->
+
+        <script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/Chart.min.js" type="text/javascript"></script>
+        <script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/profile.min.js" type="text/javascript"></script>
+        <!-- <div id="profileOverlay"></div> -->
+        <div class="" id="qr_cloud_resume" style="display: none;">
+            <div class="cloud">
+                <img width="134" height="134" src="">
+                <a class="close" href="javascript:;"></a>
+            </div>
+        </div>
+       <!-- <script>
+            $(function(){
+                $.ajax({
+                    url:ctx+"/mycenter/showQRCode",
+                    type:"GET",
+                    async:false
+                }).done(function(data){
+                    if(data.success){
+                        $('#qr_cloud_resume img').attr("src",data.content);
+                    }
+                });
+                var sessionId = "resumeQR"+314873;
+                if(!$.cookie(sessionId)){
+                    $.cookie(sessionId, 0, {expires: 1});
+                }
+               /* if($.cookie(sessionId) &amp;&amp; $.cookie(sessionId) != 5){
+                    $('#qr_cloud_resume').removeClass('dn');
+                }*/
+                $('#qr_cloud_resume .close').click(function(){
+                    $('#qr_cloud_resume').fadeOut(200);
+                    resumeQR = parseInt($.cookie(sessionId)) + 1;
+                    $.cookie(sessionId, resumeQR, {expires: 1});
+                });
+            });
+        </script>-->
+        <div class="clear"></div>
+        <input type="hidden" value="97fd449bcb294153a671f8fe6f4ba655" id="resubmitToken">
+        <a rel="nofollow" title="回到顶部" id="backtop" style="display: none;"></a>
+    </div><!-- end #container -->
+</div><!-- end #body -->
+
+<!--引入底部 start-->
+<?php $form = ActiveForm::begin(); ?>
+<?php $this->beginContent('@frontend/views/site/footer.html')?>
+<?php $this->endContent()?>
+<?php ActiveForm::end(); ?>
+<!--END-->
+
+
+<script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/core.min.js" type="text/javascript"></script>
+<script src="<?=Yii::$app->request->baseUrl?>/frontend/assets/style/js/popup.min.js" type="text/javascript"></script>
+
+<!--  -->
+
+<script type="text/javascript">
+    $(function(){
+        $('#noticeDot-1').hide();
+        $('#noticeTip a.closeNT').click(function(){
+            $(this).parent().hide();
+        });
+    });
+    var index = Math.floor(Math.random() * 2);
+    var ipArray = new Array('42.62.79.226','42.62.79.227');
+    var url = "ws://" + ipArray[index] + ":18080/wsServlet?code=314873";
+    var CallCenter = {
+        init:function(url){
+            var _websocket = new WebSocket(url);
+            _websocket.onopen = function(evt) {
+                console.log("Connected to WebSocket server.");
+            };
+            _websocket.onclose = function(evt) {
+                console.log("Disconnected");
+            };
+            _websocket.onmessage = function(evt) {
+                //alert(evt.data);
+                var notice = jQuery.parseJSON(evt.data);
+                if(notice.status[0] == 0){
+                    $('#noticeDot-0').hide();
+                    $('#noticeTip').hide();
+                    $('#noticeNo').text('').show().parent('a').attr('href',ctx+'/mycenter/delivery.html');
+                    $('#noticeNoPage').text('').show().parent('a').attr('href',ctx+'/mycenter/delivery.html');
+                }else{
+                    $('#noticeDot-0').show();
+                    $('#noticeTip strong').text(notice.status[0]);
+                    $('#noticeTip').show();
+                    $('#noticeNo').text('('+notice.status[0]+')').show().parent('a').attr('href',ctx+'/mycenter/delivery.html');
+                    $('#noticeNoPage').text(' ('+notice.status[0]+')').show().parent('a').attr('href',ctx+'/mycenter/delivery.html');
+                }
+                $('#noticeDot-1').hide();
+            };
+            _websocket.onerror = function(evt) {
+                console.log('Error occured: ' + evt);
+            };
+        }
+    };
+    CallCenter.init(url);
+</script>
+
+
+<script>
+    $('#button').click(function(){
+        $('.dn1').show();
+        $('.nameShow').hide();
+    })
+    //修改头部  简历名称
+    $('#button1').click(function(){
+        var resumeName=$('input[name=resumeName]').val();
+        $.get('index.php?r=resume/title',{resumeName:resumeName},function(msg){
+            var data=eval("("+msg+")");
+            if(data.error==1){
+                $('#span_time').html(data.pre_time);
+                $('.dn1').hide();
+                $('#span1').html(data.pre_name);
+                $('#span2').html(data.pre_name);
+                $('#pre_name').val(data.pre_name);
+                $('.nameShow').show();
+            }else{
+                $('#err1').html('<font color="red" >'+data.msg+'</font>');
+            }
+        })
+    })
+
+    //修改基本信息
+    $('#button2').click(function(){
+        var pre_name=$('input[name=pre_name]').val();  //姓名
+        var pre_sex=$(':checked').val();               //性别
+        var stu_name=$('input[name=stu_name]').val();  //学历
+        var suf_name=$('input[name=suf_name]').val();  //工作经验
+        var m_phone=$('input[name=m_phone]').val();   //手机号
+        var m_email=$('input[name=m_email]').val();   //邮箱
+        var sta_name=$('input[name=sta_name]').val(); //目前状态
+        if(sta_name ==''){
+            sta_name = $('#pageType').val();
+        }else{
+            sta_name=$('input[name=sta_name]').val(); //目前状态
+        }
+        $.get('index.php?r=resume/preson',{pre_name:pre_name,pre_sex:pre_sex,stu_name:stu_name,suf_name:suf_name,m_phone:m_phone,m_email:m_email,sta_name:sta_name},function(msg){
+            var data=eval("("+msg+")");
+            if(data.error==0){
+                $('#err2').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                $('#err2').html('');
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改期望工作
+    $('#button3').click(function(){
+        var expectCity = $('#expectCity').val();   //期望城市
+
+        if(expectCity ==''){
+            expectCity =$('#select_expectCity').val();
+        }else{
+            expectCity = $('#expectCity').val();
+        }
+        var expectSalary= $('#expectSalary').val();           //期望月薪
+        if(expectSalary ==''){
+            expectSalary =$('#select_expectSalary').val();
+        }else{
+            expectSalary = $('#expectSalary').val();
+        }
+        var type= $('input[name=type]')   //全职 兼职  实习
+        var expectPosition= $('#expectPosition').val();        //期望职位
+
+        for(var i=0;i<type.length;i++){
+            if(type[i].checked==true){
+                 var type_mold=type[i].value;     //全职 兼职  实习
+            }
+        }
+        $.get('index.php?r=resume/hope',{expectCity:expectCity,type_mold:type_mold,expectPosition:expectPosition,expectSalary:expectSalary},function(msg){
+            var data=eval("("+msg+")");
+            if(data.error==0){
+                $('#err3').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                $('#err3').html('');
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改工作经历
+    $('#button4').click(function(){
+        var companyName =$('input[name=companyName]').val();    //公司名称
+        var positionName =$('input[name=positionName]').val();  //职位名称
+        var companyYearStart =$('input[name=companyYearStart]').val();  //开始年份
+        var companyMonthStart =$('input[name=companyMonthStart]').val();  //开始月份
+        var companyYearEnd =$('input[name=companyYearEnd]').val();  //结束年份
+        var companyMonthEnd =$('input[name=companyMonthEnd]').val();  //结束月份
+        $.get('index.php?r=resume/works_undergo',{companyName:companyName,positionName:positionName,companyYearStart:companyYearStart,companyMonthStart:companyMonthStart,companyYearEnd:companyYearEnd,companyMonthEnd:companyMonthEnd},function(msg){
+            var data=eval("("+msg+")");
+            if(data.error==0){
+                $('#err4').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                $('#err4').html('');
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改项目经验
+    $('#button5').click(function(){
+        var projectName=$('input[name=projectName]').val();
+        var thePost=$('input[name=thePost]').val();
+        var projectYearStart=$('input[name=projectYearStart]').val();
+        var projectMonthStart=$('input[name=projectMonthStart]').val();
+        var projectYearEnd=$('input[name=projectYearEnd]').val();
+        var projectMonthEnd=$('input[name=projectMonthEnd]').val();
+        var projectDescription=$('textarea[name=projectDescription]').val();
+        $.get('index.php?r=resume/project_experiences',{projectName:projectName,thePost:thePost,projectYearStart:projectYearStart,projectMonthStart:projectMonthStart,projectYearEnd:projectYearEnd,projectMonthEnd:projectMonthEnd,projectDescription:projectDescription},function(msg){
+           var data=eval("("+msg+")");
+            if(data.error==0){
+                $('#err5').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                $('#err5').html('');
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改教育背景
+    $('#button6').click(function(){
+        var schoolName=$('input[name=schoolName]').val();
+        var degree=$('input[name=degree]').val();
+        var professionalName=$('input[name=professionalName]').val();
+        var schoolYearStart=$('input[name=schoolYearStart]').val();
+        var schoolYearEnd=$('input[name=schoolYearEnd]').val();
+        $.get('index.php?r=resume/study_undergo',{schoolName:schoolName,degree:degree,professionalName:professionalName,schoolYearStart:schoolYearStart,schoolYearEnd:schoolYearEnd},function(msg){
+            var data=eval("("+msg+")");;
+            if(data.error == 0){
+                $('#err6').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                $('#err6').html('');
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改自我描述
+    $('#button7').click(function(){
+        var selfDescription=$('textarea[name=selfDescription]').val();
+        $.get('index.php?r=resume/res_desc',{selfDescription:selfDescription},function(msg){
+            if(msg==1){
+                location.href='index.php?r=resume/index';
+            }else{
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //修改作品展示
+    $('#button8').click(function(){
+        var workLink=$('input[name=workLink]').val();
+        var workDescription=$('textarea[name=workDescription]').val();
+        $.get('index.php?r=resume/res_works',{workLink:workLink,workDescription:workDescription},function(msg){
+            var data=eval("("+msg+")");
+            if(data.error==0){
+                $('#err8').html('<font color="red" >'+data.msg+'</font>');
+            }else{
+                location.href='index.php?r=resume/index';
+            }
+        })
+    })
+
+    //基本信息上传图片
+    $('#headPic').change(function(){
+
+        //创建FormData对象
+        var data = new FormData();
+        var hid=$('input[name=hid]').val();
+
+        //为FormData对象添加数据
+        $.each($('#headPic')[0].files, function(i, file) {
+            data.append('upload_file', file);
+        });
+        data.append('img',hid);
+        $.ajax({
+            url:'index.php?r=resume/upload',
+            type:'POST',
+            data:data,
+            cache: false,
+            contentType: false,    //不可缺
+            processData: false,    //不可缺
+            success:function(msg){
+                $('#header_img').removeAttr('src');
+                $('#header_img').attr('src',msg);
+            }
+        })
+    })
+</script>
+
+<div id="cboxOverlay" style="display: none;"></div><div id="colorbox" class="" role="dialog" tabindex="-1" style="display: none;"><div id="cboxWrapper"><div><div id="cboxTopLeft" style="float: left;"></div><div id="cboxTopCenter" style="float: left;"></div><div id="cboxTopRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxMiddleLeft" style="float: left;"></div><div id="cboxContent" style="float: left;"><div id="cboxTitle" style="float: left;"></div><div id="cboxCurrent" style="float: left;"></div><button type="button" id="cboxPrevious"></button><button type="button" id="cboxNext"></button><button id="cboxSlideshow"></button><div id="cboxLoadingOverlay" style="float: left;"></div><div id="cboxLoadingGraphic" style="float: left;"></div></div><div id="cboxMiddleRight" style="float: left;"></div></div><div style="clear: left;"><div id="cboxBottomLeft" style="float: left;"></div><div id="cboxBottomCenter" style="float: left;"></div><div id="cboxBottomRight" style="float: left;"></div></div></div><div style="position: absolute; width: 9999px; visibility: hidden; display: none;"></div></div></body></html>
